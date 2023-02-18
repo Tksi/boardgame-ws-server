@@ -63,6 +63,7 @@ wss.on('connection', (ws, req) => {
         case 'SEND': {
           gameStates.delete(message.gameId);
 
+          // 自分以外の全員へ送信
           broadcast(
             { type: 'GAMESTATE', body: message.gameState },
             message.gameState,
