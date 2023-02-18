@@ -65,7 +65,8 @@ wss.on('connection', (ws, req) => {
 
           broadcast(
             { type: 'GAMESTATE', body: message.gameState },
-            message.gameState
+            message.gameState,
+            `USER-${req.socket.remoteAddress}:${req.socket.remotePort}`
           );
 
           break;
@@ -109,10 +110,13 @@ wss.on('connection', (ws, req) => {
 
 const broadcast = <T, U>(
   message: ResMessage<T, U>,
-  gameState: GameState<T, U>
+  gameState: GameState<T, U>,
+  exclude?: UserId
 ) => {
   for (const userId of gameState.userStates.keys()) {
-    unicast(message, userId);
+    if (userId !== exclude) {
+      unicast(message, userId);
+    }
   }
 };
 
